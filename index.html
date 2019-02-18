@@ -1,0 +1,201 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>Bouncing Ball</title>
+<style>
+#canvas-container {
+   width: 100%;
+   text-align:center;
+}
+
+#myCanvas{
+	border:1px solid #cbcbcb;
+   display: inline;
+
+}
+</style>
+<script >
+var leftscore = 0;
+var rightscore = 0;
+var dx;
+var dy;
+var y = 285;
+var x = 675;
+var clear;
+
+// dx = 5;
+// dy = 5;
+
+// for random variable speed and direction
+// var items = [-3,-2,-1,1,2,3];
+// dx = items[Math.floor(Math.random()*items.length)];
+// dy = items[Math.floor(Math.random()*items.length)];
+
+var right_paddle_position = 235;
+var left_paddle_position = 235;
+var count = 0;
+
+function randomlimit(k) {
+    var x = Math.floor((Math.random() * k) + 35);
+    return x-1;
+}
+
+function draw(){	
+	var context= myCanvas.getContext('2d');
+	if(document.getElementById("clearscreen").checked){
+		context.clearRect(0,0,1350,570);
+	}
+	context.beginPath();
+	context.arc(x,y,ballsize,0,Math.PI*2,true);
+	context.fillStyle="green";
+	context.closePath();
+
+	// context.beginPath();
+	// context.arc(675,570,25,0,Math.PI*2,true);
+	// context.fillStyle="red";
+	// context.closePath();
+
+
+	context.fill();
+	context.fillStyle="black";
+	context.fillRect(1340,right_paddle_position,10,100);
+	context.fillStyle="black";
+	context.fillRect(0,left_paddle_position,10,100);
+		context.stroke();
+		if(x<0+10+ballsize || x>1350-10-ballsize){
+			dx=-dx;
+		}
+		if (x>=1350-10-ballsize){
+			// console.log("right edge strike",x,y,dx,dy);
+			if ( y >= right_paddle_position-10 && y <= right_paddle_position+110){
+				// score++;
+				// document.getElementById('score').innerHTML = "SCORE : "+score;
+			}
+			else{
+			// console.log("right edge strike pe Restart",x,y,dx,dy);/
+
+				// alert("Right has lost .... Restart Game");
+				y = randomlimit(500);
+				// right_paddle_position = 235;
+				// left_paddle_position = 235;
+				x = 675;
+				// for random variable speed and direction
+				// dx = items[Math.floor(Math.random()*items.length)];
+				// dy = items[Math.floor(Math.random()*items.length)];
+				leftscore++;
+				document.getElementById('leftscore').innerHTML = "Left Score : " + leftscore;
+			}
+		}
+
+
+		if (x<=0+10+ballsize){
+			// console.log("left edge strike",x,y,dx,dy);
+			if ( y >=left_paddle_position-10 && y <= left_paddle_position+110){
+				// score++;
+				// document.getElementById('leftscore').innerHTML = "SCORE : "+score;
+			}
+			else{
+				// alert("Left has lost .... Restart Game");
+			// console.log("left edge strike pe Restart",x,y,dx,dy);
+				y = randomlimit(500);
+				x = 675;
+
+				// for random variable speed and direction
+				// dx = items[Math.floor(Math.random()*items.length)];
+				// dy = items[Math.floor(Math.random()*items.length)];
+				rightscore++;
+				// right_paddle_position = 235;
+				// left_paddle_position = 235;
+				document.getElementById('rightscore').innerHTML = "Right Score : " + rightscore;
+			}
+		}
+
+
+		if( y<ballsize+5 || y>570-ballsize-5){
+			dy=-dy;
+		}
+		x+=dx;
+		y+=dy;
+	}
+	window.addEventListener("keydown", checkKeyPressed, false);
+	function checkKeyPressed(e) {
+	    if (e.keyCode == '32') {
+		    e.preventDefault();
+		    ballsize = parseInt(document.getElementById("ballsize").value);
+		    dx = dy = ballspeed = parseInt(document.getElementById("ballspeed").value);
+		    if(ballsize>0){
+		    	if(ballspeed>0){
+					if (count%2 == 1){
+						clearInterval(clear);
+						count++;
+					}
+					else{
+						clear = setInterval(draw,1); 
+						count++;
+					}
+				}else{
+					alert("Please enter correct ball speed");					
+				}
+			}
+			else{
+				alert("Please enter correct ball size");
+			}	
+	    }
+
+	    if (e.keyCode == '82') {
+	    	x = 675;
+	    	y = 285;
+	    	leftscore = 0;
+	    	rightscore = 0;
+			right_paddle_position = 235;
+			left_paddle_position = 235;
+			document.getElementById('leftscore').innerHTML = "Left Score : " + leftscore;
+			document.getElementById('rightscore').innerHTML = "Right Score : " + rightscore;	    	
+		}
+
+	    if (e.keyCode == '81') {
+	    	if(left_paddle_position>0)
+				left_paddle_position = left_paddle_position-50;	    	
+	    }
+	    if (e.keyCode == '65') {
+	    	if(left_paddle_position<470)
+				left_paddle_position = left_paddle_position+50;	    	
+	    }
+
+
+
+	    if (e.keyCode == '80') {
+	    	if(right_paddle_position>0)
+				right_paddle_position = right_paddle_position-50;	    	
+	    }
+	    if (e.keyCode == '76') {
+	    	if(right_paddle_position<470)
+				right_paddle_position = right_paddle_position+50;	    	
+	    }
+	}
+
+
+</script>
+
+</head>
+<body>
+<span style="text-align: left;float: left;" >Ball Size:</span>
+<input style="text-align: left;float: left;" type="number" value="20" id="ballsize">
+<div>
+	<input style="text-align: right;float: right;" type="checkbox" id="clearscreen">
+	<span  style="text-align: right;float: right;" >Clear Screen:</span>
+	<input style="text-align: right;float: right;" type="number" value="2" id="ballspeed">
+	<span  style="text-align: right;float: right;" >Ball Speed:</span>
+</div>
+<h3 style="text-align: center;" id="score">Press Spacebar after setting parameters to start</h3>
+<h4 style="text-align: left;float: left;" id="leftscore">Left Score : 0</h4>
+<h4 style="text-align: right;float: right;" id="rightscore">Right Score : 0</h4><br>
+<h4 style="text-align: left;float: left;"> Q,A for left player</h4>
+<h4 style="text-align: right;float: right;"> P,L for left player</h4>
+
+<div id="canvas-container">
+ <canvas id="myCanvas" width="1350" height="570"></canvas>	
+</div>
+</body>
+</html>
